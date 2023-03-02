@@ -24,7 +24,7 @@ function Deck() {
             };
         }
         fetchData();
-    }, []);
+    }, [deckId]); 
 
     async function handleDeleteDeck(deck) {
         if (
@@ -34,8 +34,8 @@ function Deck() {
         ) { 
             const abortController = new AbortController();
             try {
+                await deleteDeck(deck.id, abortController.signal);
                 history.push("/");
-                return await deleteDeck(deck.id,abortController.signal);
             } catch (error) {
                 console.error("Something went wrong", error);
             }
@@ -53,8 +53,9 @@ function Deck() {
         ) {
             const abortController = new AbortController();
             try {
-                history.go(0);
-                return await deleteCard(card.id, abortController.signal);
+                await deleteCard(card.id, abortController.signal);
+                setCards((prevCards) => prevCards.filter((c) => c.id !== card.id));
+               
             } catch (error) {
                 console.error("Something went wrong", error);
             }

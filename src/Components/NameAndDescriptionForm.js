@@ -1,18 +1,26 @@
-import React, {useState, useEffect} from "react";
+//import React, {useState, useEffect} from "react";
 
-function NameAndDescriptionForm({ handleChange, handleSubmit, handleCancel, mode, deck }) {
+function NameAndDescriptionForm({ handleChange, handleSubmit, handleCancel, mode, deck}) {
+// i was originally passing deck to the parent componenent, but that was a no-no...pass it to the parents
 
-    console.log(deck);
+ 
+    //console.log(deck);
 
+    /*
     const [deckName, setDeckName] = useState(deck?.name || "");
     const [deckDescription, setDeckDescription] = useState(deck?.description || "")
+    */
 
+    /*
     useEffect(() => {
         setDeckName(deck?.name || "");
         setDeckDescription(deck?.description || "");
    }, [deck]);
+    */
+
  //console.log(mode);
-    return (
+    
+return (
         <>
         <h3>{mode === "Edit" ? "Edit Deck" : "Create Deck"}</h3>
         <form onSubmit={handleSubmit}>
@@ -27,11 +35,12 @@ function NameAndDescriptionForm({ handleChange, handleSubmit, handleCancel, mode
                     id="FormControlInput1"
                     name="name" 
                     //onChange={handleChange}
-                    value={deckName}
-                    onChange={(event) => {
-                        setDeckName(event.target.value);
-                        handleChange(event);
-                    }}
+                    //value={deckName}
+                    //onChange={(event) => {
+                        //setDeckName(event.target.value);
+                        //handleChange(event);
+                    value={deck.name}
+                    onChange={handleChange}
                 />
 
                 <div className="mb-3">
@@ -45,11 +54,13 @@ function NameAndDescriptionForm({ handleChange, handleSubmit, handleCancel, mode
                         id="FormControlTextarea1"
                         name="description"
                         rows="3"
-                        value={deckDescription}
-                        onChange={(event) => {
-                            setDeckDescription(event.target.value);
-                            handleChange(event);
-                        }}
+                        //value={deckDescription}
+                        //onChange={(event) => {
+                        //    setDeckDescription(event.target.//value);
+                        //    handleChange(event);
+                        //}}
+                        value={deck.description}
+                        onChange={handleChange}
                     />
 
                     <button

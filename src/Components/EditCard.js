@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link, useHistory, useParams } from "react-router-dom";
 import { readCard, readDeck, updateCard } from "../utils/api/index";
+import CardForm from "./CardForm";
 
 function EditCard() {
     const { deckId, cardId } = useParams();
@@ -42,7 +43,7 @@ function EditCard() {
             };
         }
         fetchData();
-    }, []);
+    }, [deckId, cardId]);
 
     function handleChange({ target }) {
         setCard({
@@ -55,6 +56,7 @@ function EditCard() {
         event.preventDefault();
         const abortController = new AbortController();
         const response = await updateCard({ ...card }, abortController.signal);
+        await readDeck(deckId, abortController.signal);
         history.push(`/decks/${deckId}`);
         return response; 
     }
@@ -74,40 +76,15 @@ function EditCard() {
                 </li>
                 <li className="breadcrumb-item active">Edit Card {cardId}</li>
             </ol>
-            <form onSubmit={handleSubmit}>
-                <h2>Edit Card</h2>
-                <div className="form-group">
-                    <label>Front</label>
-                    <textarea
-                        id="front"
-                        name="front"
-                        className="form-control"
-                        onChange={handleChange}
-                        type="text"
-                        value={card.front}
-                    />
-                </div>
-                <div className="form-group">
-                    <label>Back</label>
-                    <textarea
-                        id="back"
-                        name="back"
-                        className="form-control"
-                        onChange={handleChange}
-                        type="text"
-                        value={card.back}
-                    />
-                </div>
-                <button
-                    className="btn btn-secondary mx-1"
-                    onClick={() => handleCancel()}
-                >
-                    Cancel
-                </button>
-                <button className="btn btn-primary mx-1" type="submit">
-                    Save
-                </button>
-            </form>
+
+           <CardForm
+            handleChange={handleChange}
+            handleCancel={handleCancel}
+            handleSubmit={handleSubmit}
+            mode="Edit"
+            card={{ front: card.front, back: card.back }}
+            />
+            
         </div>
     );
 }

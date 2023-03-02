@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { Link, useHistory, useParams } from "react-router-dom";
-import { createCard, readDeck } from "../utils/api/index";
+import { createCard, readDeck, updateDeck } from "../utils/api/index";
+import CardForm from "./CardForm";
 
 function AddCard() {
     const history = useHistory();
     const { deckId } = useParams();
     const initialState = {
         front:"",
-        back: "",
+        back:"",
     };
     const [deck, setDeck] = useState({});
     const [newCard, setNewCard] = useState(initialState);
@@ -27,7 +28,7 @@ abortController.signal);
             };
         }
         fetchData();
-    }, []);
+    }, [deckId]);
 
     async function handleSubmit(event) {
         event.preventDefault();
@@ -37,7 +38,8 @@ abortController.signal);
             {...newCard},
             abortController.signal
         );
-        history.go(0);
+        await updateDeck({ ...deck, cards: [...deck.cards, response]}, abortController.signal);
+        history.push(`/decks/${deckId}`);
         setNewCard(initialState);
         return response;
     }
@@ -50,7 +52,7 @@ abortController.signal);
     }
 
     
-    async function handleDone() {
+    async function handleCancel() {
         history.push(`/decks/${deckId}`);
     }
 
@@ -65,38 +67,14 @@ abortController.signal);
                 </li>
                 <li className="breadcrumb-item active">Add Card</li>
             </ol>
-            <form onSubmit={handleSubmit}>
-            <h2>{deck.name}: Add Card</h2>
-            <div className="form-group">
-                    <label>Front</label>
-                    <textarea   
-                        type="text"
-                        id="front"
-                        name="front"
-                        className="form-control"
-                        onChange={handleChange}
-                        value={newCard.front}
-                    />
-                </div>
-                <div className="form-group">
-                    <label>Back</label>
-                    <textarea
-                        type="text"
-                        id="back"
-                        name="back"
-                        className="form-control"
-                        onChange={handleChange}
-                        value={newCard.back}
-                        />
-        </div>
-        <button 
-                    className="btn btn-secondary m-1 p-1"
-                    onClick={() => handleDone()}
-                    >Done</button>
-                <button
-                    className="btn btn-primary m-1 p-1" 
-                    type="submit">Save</button>
-            </form>
+
+            <CardForm 
+                handleSubmit={handleSubmit}
+                handleChange={handleChange}
+                handleCancel={handleCancel}
+                mode="Add"
+                card={{ front: newCard.front, back: newCard.back }}
+                />
         </div>
     );
 }
